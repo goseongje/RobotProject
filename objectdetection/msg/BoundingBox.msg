@@ -1,0 +1,9 @@
+float64 prob
+int64 x1
+int64 y1
+int64 x2
+int64 y2
+int64 x_mid
+int64 y_mid
+int16 id
+string Class
