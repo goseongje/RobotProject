@@ -28,12 +28,7 @@ COCO_INSTANCE_CATEGORY_NAMES = [
     'clock', 'vase', 'scissors', 'teddy bear', 'hair drier', 'toothbrush'
 ]
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-# model = models.detection.maskrcnn_resnet50_fpn(pretrained=True).to(device)
-model = models.detection.fasterrcnn_mobilenet_v3_large_fpn(pretrained=True).to(device)
-model.eval()
-transforms_composed = transforms.Compose([
-        transforms.ToTensor()])
+CUSTOM_CATEGORY_NAMES = ['__background__', "coke", "green", "white"]
 
 def forward_model(img_arr):
     img_tensor = transforms_composed(img_arr).unsqueeze(0)
@@ -135,6 +130,32 @@ def publish_message():
         print("FPS is {:.2f}".format(1 / (time.time() - start_time)))
         
 if __name__ == '__main__':
+    # load custom trained model if True
+    # load COCO trained model if False
+    load_custom = False
+    trained_model = './results/epoch_20.tar'
+    NUM_CLASS = 4    
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    if load_custom:
+        # load model trained on custom dataset
+        # model = models.detection.maskrcnn_resnet50_fpn(pretrained=True).to(device)
+        model = models.detection.fasterrcnn_mobilenet_v3_large_fpn(pretrained=True).to(device)
+        model.load_state_dict(torch.load(trained_model))
+        model = model.to(device)  
+        classes = CUSTOM_CATEGORY_NAMES
+    else:
+        # load model trained on COCO public dataset
+        # model = models.detection.maskrcnn_resnet50_fpn(pretrained=True).to(device)
+        model = models.detection.fasterrcnn_mobilenet_v3_large_fpn(pretrained=True).to(device)
+        model = model.to(device)
+        classes = COCO_INSTANCE_CATEGORY_NAMES
+
+    model.eval()
+    transforms_composed = transforms.Compose([
+            transforms.ToTensor()])
+
     try:
         publish_message()
     except rospy.ROSInterruptException:
