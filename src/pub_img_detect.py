@@ -7,7 +7,8 @@ from cv_bridge import CvBridge # Package to convert between ROS and OpenCV Image
 import sys
 #sys.path.remove("/opt/ros/melodic/lib/python2.7/dist-packages")
 import cv2 # OpenCV library
-import time 
+import time
+import pafy 
 
 import torch
 import torchvision.models as models
@@ -99,7 +100,7 @@ def publish_message():
     rate = rospy.Rate(10) # 10hz
 
     # Create a VideoCapture object
-    cap = cv2.VideoCapture(2)   # laptop cam (0) / usb 435i (2)
+    cap = cv2.VideoCapture(2)   # laptop cam (0) / usb 435i (2)    
     assert cap.isOpened(), 'Cannot capture source'
 
     # Used to convert between ROS and OpenCV images
